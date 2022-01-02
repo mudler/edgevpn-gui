@@ -25,6 +25,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 	"github.com/0xAX/notificator"
@@ -142,25 +143,30 @@ func (c *dashboard) Reload(app fyne.App) {
 				nil,
 				container.NewCenter(container.NewGridWithColumns(
 					1,
-					noVPN, addVPN(), generateVPN(), importVPN(),
+					noVPN, addVPN(), generateVPN(), importVPN(), downloadEdgeVPN(),
 				)),
 			),
 		)
+		c.window.Resize(fyne.NewSize(640, 640))
 	} else {
-		b := container.NewGridWrap(fyne.NewSize(310, 110), genCards()...)
+		cards := genCards()
+		grid := container.NewAdaptiveGrid(3, cards...)
+		acc := widget.NewAccordion(
+			widget.NewAccordionItem(
+				"Create, Import ...",
+				container.NewGridWithColumns(
+					4,
+					addVPN(), generateVPN(), downloadEdgeVPN(), importVPN(),
+				),
+			),
+		)
+		c.window.Resize(grid.Layout.MinSize(append(cards, acc, welcomeText, layout.NewSpacer())))
+		b := container.NewVScroll(grid)
 
 		c.window.SetContent(
 			container.NewBorder(
 				welcomeText,
-				widget.NewAccordion(
-					widget.NewAccordionItem(
-						"Create, Import ...",
-						container.NewGridWithColumns(
-							4,
-							addVPN(), generateVPN(), downloadEdgeVPN(), importVPN(),
-						),
-					),
-				),
+				acc,
 				nil,
 				nil,
 				b,
@@ -173,8 +179,7 @@ func (c *dashboard) Reload(app fyne.App) {
 func (c *dashboard) loadUI(app fyne.App) {
 	c.window = app.NewWindow("EdgeVPN")
 	c.Reload(app)
-	c.window.Resize(fyne.NewSize(640, 640))
-	c.window.SetFixedSize(true)
+	c.window.SetPadded(true)
 	c.window.CenterOnScreen()
 	c.window.Show()
 

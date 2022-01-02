@@ -24,6 +24,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 
@@ -293,7 +294,12 @@ func (c *vpn) card(app fyne.App, w fyne.Window) fyne.CanvasObject {
 
 	return widget.NewCard(
 		c.Name, c.IP,
-		container.NewHBox(
-			objs...,
-		))
+		container.NewVBox(
+			container.NewHBox(
+				objs...,
+			),
+			layout.NewSpacer(),
+		),
+	)
+
 }
