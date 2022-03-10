@@ -161,7 +161,7 @@ func (c *dashboard) Reload(app fyne.App) {
 			),
 		)
 		c.window.Resize(grid.Layout.MinSize(append(cards, acc, welcomeText, layout.NewSpacer())))
-		b := container.NewVScroll(grid)
+		b := container.NewVScroll(container.NewVBox(grid))
 
 		c.window.SetContent(
 			container.NewBorder(
