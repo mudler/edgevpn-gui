@@ -27,27 +27,22 @@ import (
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
-	"github.com/0xAX/notificator"
 	process "github.com/mudler/go-processmanager"
 	"github.com/nxadm/tail"
 )
 
 //go:generate fyne bundle -package gui -o data.go ../Icon.png
-var notify *notificator.Notificator
 
 func Run() {
-
-	notify = notificator.New(notificator.Options{
-		AppName: "EdgeVPN",
-	})
 
 	app := app.New()
 	app.Settings().SetTheme(theme.LightTheme())
 	app.SetIcon(resourceIconPng)
+
 	c := newDashboard()
 	c.loadUI(app)
+	makeTray(app, c)
 	app.Run()
-
 }
 
 func errorWindow(err error, w fyne.Window) {

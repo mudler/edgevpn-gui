@@ -25,10 +25,8 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
-	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
-	"github.com/0xAX/notificator"
 	"github.com/mudler/edgevpn-gui/resources"
 )
 
@@ -119,7 +117,7 @@ func (c *dashboard) Reload(app fyne.App) {
 							return
 						}
 						c.Reload(app)
-						notify.Push("info", "File saved", "", notificator.UR_NORMAL)
+						app.SendNotification(fyne.NewNotification("info", "File saved"))
 					}, c.window)
 				d.Show()
 			})
@@ -134,6 +132,12 @@ func (c *dashboard) Reload(app fyne.App) {
 	}
 	noVPN := widget.NewLabel("No VPN found in the system!")
 
+	aboutButton := widget.NewButtonWithIcon("About",
+		theme.InfoIcon(),
+		func() {
+			about(app)
+		})
+
 	if len(readVpn()) == 0 {
 		c.window.SetContent(
 			container.NewBorder(
@@ -144,6 +148,7 @@ func (c *dashboard) Reload(app fyne.App) {
 				container.NewCenter(container.NewGridWithColumns(
 					1,
 					noVPN, addVPN(), generateVPN(), importVPN(), downloadEdgeVPN(),
+					aboutButton,
 				)),
 			),
 		)
@@ -160,7 +165,9 @@ func (c *dashboard) Reload(app fyne.App) {
 				),
 			),
 		)
-		c.window.Resize(grid.Layout.MinSize(append(cards, acc, welcomeText, layout.NewSpacer())))
+		c.window.Resize(fyne.NewSize(640, 640))
+
+		//c.window.Resize(grid.Layout.MinSize(append(cards, acc, welcomeText, layout.NewSpacer())))
 		b := container.NewVScroll(container.NewVBox(grid))
 
 		c.window.SetContent(

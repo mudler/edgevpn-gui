@@ -28,7 +28,6 @@ import (
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 
-	"github.com/0xAX/notificator"
 	process "github.com/mudler/go-processmanager"
 )
 
@@ -63,7 +62,7 @@ func (c *vpn) showDetails(w fyne.Window, app fyne.App) {
 	v := widget.NewFormItem("VPN Name", name)
 	ip := widget.NewFormItem("IP", ipE)
 
-	s := container.NewHSplit(token, c.tokenClipboardButton())
+	s := container.NewHSplit(token, c.tokenClipboardButton(app))
 	s.SetOffset(0.9)
 	tokenW := widget.NewFormItem("Token", s)
 
@@ -83,7 +82,7 @@ func (c *vpn) showDetails(w fyne.Window, app fyne.App) {
 			}
 			io.Copy(f, s)
 			f.Close()
-			notify.Push("info", "File saved", "", notificator.UR_NORMAL)
+			app.SendNotification(fyne.NewNotification("info", "File saved"))
 		}, w)
 
 	iff := widget.NewEntry()
@@ -265,7 +264,7 @@ func (c *vpn) card(app fyne.App, w fyne.Window) fyne.CanvasObject {
 	var objs []fyne.CanvasObject
 
 	info := widget.NewButtonWithIcon("",
-		theme.InfoIcon(),
+		theme.SettingsIcon(),
 		func() {
 			c.showUI(app)
 		},
@@ -301,5 +300,4 @@ func (c *vpn) card(app fyne.App, w fyne.Window) fyne.CanvasObject {
 			layout.NewSpacer(),
 		),
 	)
-
 }

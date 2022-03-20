@@ -12,7 +12,6 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
-	"github.com/0xAX/notificator"
 	"github.com/cavaliercoder/grab"
 	"github.com/mholt/archiver/v3"
 	"github.com/otiai10/copy"
@@ -57,7 +56,8 @@ Loop:
 		errorWindow(err, w)
 	}
 	w.Close()
-	notify.Push("info", fmt.Sprintf("Download saved to ./%v", resp.Filename), "", notificator.UR_NORMAL)
+	app.SendNotification(fyne.NewNotification("info", fmt.Sprintf("Download saved to ./%v", resp.Filename)))
+
 	return resp.Filename
 }
 

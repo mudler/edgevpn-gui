@@ -31,7 +31,6 @@ import (
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 
-	"github.com/0xAX/notificator"
 	"github.com/go-vgo/robotgo/clipboard"
 	process "github.com/mudler/go-processmanager"
 )
@@ -78,11 +77,11 @@ func (c *vpn) stopButton(app fyne.App, w fyne.Window) *widget.Button {
 	return s
 }
 
-func (c *vpn) tokenClipboardButton() *widget.Button {
+func (c *vpn) tokenClipboardButton(app fyne.App) *widget.Button {
 	return widget.NewButtonWithIcon(
 		"",
 		theme.ContentCopyIcon(),
-		c.clipboard(),
+		c.clipboard(app),
 	)
 }
 
@@ -147,11 +146,26 @@ func (c *vpn) start(app fyne.App, w fyne.Window) func() {
 			vpnP.Stop()
 			os.RemoveAll(processStateDir)
 		}
+
 		go func() {
 			time.Sleep(2 * time.Second)
 			c.parent.Reload(app)
 			if w != nil {
 				c.showDetails(w, app)
+			}
+			if vpnP.IsAlive() {
+				app.SendNotification(
+					fyne.NewNotification(
+						"connection successful",
+						fmt.Sprintf("Network '%s' started on interface '%s'", c.Name, c.Interface)))
+			} else {
+				app.SendNotification(
+					fyne.NewNotification(
+						"connection failed",
+						fmt.Sprintf("failed starting VPN '%s'", c.Name),
+					))
+				vpnP.Stop()
+				os.RemoveAll(processStateDir)
 			}
 		}()
 	}
@@ -236,10 +250,10 @@ func (c *vpn) delete(app fyne.App, p fyne.Window) func() {
 	}
 }
 
-func (c *vpn) clipboard() func() {
+func (c *vpn) clipboard(app fyne.App) func() {
 	return func() {
 		clipboard.WriteAll(c.Token)
-		notify.Push("info", "Token copied to clipboard", "", notificator.UR_NORMAL)
+		app.SendNotification(fyne.NewNotification("info", "Token copied to clipboard"))
 	}
 }
 

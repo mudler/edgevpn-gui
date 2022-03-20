@@ -73,7 +73,7 @@ func generateToken(app fyne.App, w fyne.Window) string {
 	available := availableVersions()
 	if !isInstalled("edgevpn") && len(available) == 0 {
 		errorWindow(
-			fmt.Errorf("Can't generate a new token as edgeVPN is not installed, and no versions were downloaded"), w)
+			fmt.Errorf("can't generate a new token as EdgeVPN is not installed, and no versions were downloaded"), w)
 		return ""
 	}
 
